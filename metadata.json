@@ -1,0 +1,6 @@
+{
+  "name": "SEVA FAIR - Fair Local Service Booking & Allocation",
+  "description": "Cooperative local service booking portal with transparent workload-balanced worker allocation, conflict prevention, and multi-role dashboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
