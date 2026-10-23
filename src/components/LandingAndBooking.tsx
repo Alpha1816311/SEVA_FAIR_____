@@ -29,7 +29,7 @@ import {
 interface LandingAndBookingProps {
   onBookingCreated: (booking: Booking) => void;
   onNavigateToCustomer: (customerId: string) => void;
-  onOpenDemoTour: () => void;
+  onOpenDemoTour?: () => void;
 }
 
 const SERVICE_ITEMS: { 
@@ -181,13 +181,12 @@ export const LandingAndBooking: React.FC<LandingAndBookingProps> = ({
               >
                 Request Service
               </a>
-              <button
-                onClick={onOpenDemoTour}
-                className="px-5 py-2.5 text-sm font-semibold text-emerald-900 bg-emerald-100/70 hover:bg-emerald-200/80 rounded-lg transition-colors flex items-center gap-2"
+              <a
+                href="#allocation-rules"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg transition-colors flex items-center gap-1.5"
               >
-                <span>Launch Hackathon Demo Scenarios</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+                <span>How Fair Allocation Works</span>
+              </a>
             </div>
           </div>
 

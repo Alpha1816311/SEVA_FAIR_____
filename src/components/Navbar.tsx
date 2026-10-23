@@ -3,17 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { ActiveRole } from '../types';
-import { PlayCircle, RefreshCw, Users, Shield, Wrench, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { ActiveRole, UserSession } from '../types';
+import { authService } from '../services/authService';
+import { 
+  Shield, 
+  Wrench, 
+  User, 
+  Lock, 
+  ChevronDown, 
+  RotateCcw,
+  Sparkles,
+  CheckCircle2,
+  LogOut
+} from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   activeRole: ActiveRole;
   setActiveRole: (role: ActiveRole) => void;
-  onOpenDemoTour: () => void;
-  onOpenDeployGuide: () => void;
+  onOpenAuthModal: () => void;
   onResetDemo: () => void;
 }
 
@@ -22,40 +32,54 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   activeRole,
   setActiveRole,
-  onOpenDemoTour,
-  onOpenDeployGuide,
+  onOpenAuthModal,
   onResetDemo
 }) => {
+  const session = authService.getCurrentSession();
+
+  const getRoleBadge = (role: ActiveRole) => {
+    switch (role) {
+      case 'organiser':
+        return { label: 'Administrator', bg: 'bg-purple-100 text-purple-800 border-purple-200' };
+      case 'worker':
+        return { label: 'Verified Technician', bg: 'bg-emerald-100 text-emerald-800 border-emerald-200' };
+      default:
+        return { label: 'Resident', bg: 'bg-blue-100 text-blue-800 border-blue-200' };
+    }
+  };
+
+  const badge = session ? getRoleBadge(session.role) : { label: 'Guest', bg: 'bg-slate-100 text-slate-700 border-slate-200' };
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-8 h-16">
-          {/* Zone 1: Single text element wordmark */}
+        <div className="flex items-center justify-between gap-4 h-16">
+          {/* Brand Wordmark */}
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setActiveTab('book')}
               className="text-left group flex items-center gap-2.5"
             >
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:bg-emerald-700 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-emerald-700 flex items-center justify-center text-white font-bold text-base shadow-xs group-hover:bg-emerald-800 transition-colors">
                 SF
               </div>
               <div>
-                <span className="text-lg font-bold tracking-tight text-slate-900 whitespace-nowrap block leading-tight">
+                <span className="text-lg font-extrabold tracking-tight text-slate-900 whitespace-nowrap block leading-tight">
                   SEVA FAIR
                 </span>
-                <span className="text-[10px] text-slate-500 font-medium tracking-wider uppercase block">
-                  Fair Local Service Booking
+                <span className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase block">
+                  Cooperative Service Network
                 </span>
               </div>
             </button>
           </div>
 
-          {/* Zone 2: 4-5 clean single-line text navigation links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600">
             <button
               onClick={() => setActiveTab('book')}
-              className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 py-1 border-b-2 ${
-                activeTab === 'book' ? 'text-emerald-700 border-emerald-600 font-semibold' : 'border-transparent'
+              className={`hover:text-slate-900 transition-colors whitespace-nowrap py-1 border-b-2 ${
+                activeTab === 'book' ? 'text-emerald-700 border-emerald-700 font-bold' : 'border-transparent'
               }`}
             >
               Book Service
@@ -65,128 +89,82 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setActiveRole('customer');
                 setActiveTab('customer');
               }}
-              className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 py-1 border-b-2 ${
-                activeTab === 'customer' ? 'text-emerald-700 border-emerald-600 font-semibold' : 'border-transparent'
+              className={`hover:text-slate-900 transition-colors whitespace-nowrap py-1 border-b-2 ${
+                activeTab === 'customer' ? 'text-emerald-700 border-emerald-700 font-bold' : 'border-transparent'
               }`}
             >
-              Customer Portal
+              Resident Portal
             </button>
             <button
               onClick={() => {
                 setActiveRole('worker');
                 setActiveTab('worker');
               }}
-              className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 py-1 border-b-2 ${
-                activeTab === 'worker' ? 'text-emerald-700 border-emerald-600 font-semibold' : 'border-transparent'
+              className={`hover:text-slate-900 transition-colors whitespace-nowrap py-1 border-b-2 ${
+                activeTab === 'worker' ? 'text-emerald-700 border-emerald-700 font-bold' : 'border-transparent'
               }`}
             >
-              Worker Portal
+              Technician Portal
             </button>
             <button
               onClick={() => {
                 setActiveRole('organiser');
                 setActiveTab('organiser');
               }}
-              className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 py-1 border-b-2 ${
-                activeTab === 'organiser' ? 'text-emerald-700 border-emerald-600 font-semibold' : 'border-transparent'
+              className={`hover:text-slate-900 transition-colors whitespace-nowrap py-1 border-b-2 ${
+                activeTab === 'organiser' ? 'text-emerald-700 border-emerald-700 font-bold' : 'border-transparent'
               }`}
             >
               Organiser Console
             </button>
             <button
               onClick={() => setActiveTab('history')}
-              className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 py-1 border-b-2 ${
-                activeTab === 'history' ? 'text-emerald-700 border-emerald-600 font-semibold' : 'border-transparent'
+              className={`hover:text-slate-900 transition-colors whitespace-nowrap py-1 border-b-2 ${
+                activeTab === 'history' ? 'text-emerald-700 border-emerald-700 font-bold' : 'border-transparent'
               }`}
             >
-              Audit Trail
+              Dispatch Audit Ledger
             </button>
           </nav>
 
-          {/* Zone 3: 1 primary action and quick controls */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Role indicator dropdown */}
-            <div className="hidden sm:flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
-              <button
-                onClick={() => {
-                  setActiveRole('customer');
-                  setActiveTab('customer');
-                }}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
-                  activeRole === 'customer'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="View as Customer"
-              >
-                <User className="w-3.5 h-3.5 text-slate-500" />
-                <span>Customer</span>
-              </button>
-              <button
-                onClick={() => {
-                  setActiveRole('worker');
-                  setActiveTab('worker');
-                }}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
-                  activeRole === 'worker'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="View as Worker"
-              >
-                <Wrench className="w-3.5 h-3.5 text-slate-500" />
-                <span>Worker</span>
-              </button>
-              <button
-                onClick={() => {
-                  setActiveRole('organiser');
-                  setActiveTab('organiser');
-                }}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
-                  activeRole === 'organiser'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="View as Organiser"
-              >
-                <Shield className="w-3.5 h-3.5 text-slate-500" />
-                <span>Organiser</span>
-              </button>
-            </div>
-
-            {/* Deploy to Vercel Button */}
+          {/* Right Section: User Session & Security Profile */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Authenticated user profile badge */}
             <button
-              onClick={onOpenDeployGuide}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 active:scale-95 transition-all rounded-lg border border-slate-200"
-              title="Step-by-step guide to publish to Vercel or run in VS Code"
+              onClick={onOpenAuthModal}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all text-left"
+              title="Click to switch account or manage credentials"
             >
-              <span className="text-[11px]">🚀</span>
-              <span>Deploy to Vercel</span>
+              <div className="w-7 h-7 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-xs shadow-xs">
+                {session?.avatar || 'U'}
+              </div>
+              <div className="hidden sm:block text-left">
+                <div className="text-xs font-bold text-slate-900 leading-tight">
+                  {session?.name || 'Guest User'}
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className={`text-[9px] px-1.5 py-0.2 rounded font-medium border ${badge.bg}`}>
+                    {badge.label}
+                  </span>
+                </div>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
-            {/* Guided Demo Button - Hackathon Winning Presentation Flow */}
-            <button
-              onClick={onOpenDemoTour}
-              className="px-3.5 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 transition-all rounded-lg shadow-xs flex items-center gap-1.5 whitespace-nowrap"
-            >
-              <PlayCircle className="w-3.5 h-3.5" />
-              <span>Demo Tour</span>
-            </button>
-
-            {/* Quick Reset Demo DB */}
+            {/* Subtle reset seed data control */}
             <button
               onClick={onResetDemo}
-              title="Reset Demo Data to Initial Seed"
-              className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              title="Reset records to default clean state"
+              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile nav subbar */}
-      <div className="md:hidden flex items-center justify-between px-4 py-2 border-t border-slate-100 bg-slate-50 text-xs overflow-x-auto gap-4">
+      {/* Mobile navigation bar */}
+      <div className="md:hidden flex items-center justify-between px-4 py-2 border-t border-slate-100 bg-slate-50 text-xs overflow-x-auto gap-3">
         <button
           onClick={() => setActiveTab('book')}
           className={`whitespace-nowrap ${activeTab === 'book' ? 'text-emerald-700 font-bold' : 'text-slate-600'}`}
@@ -200,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }}
           className={`whitespace-nowrap ${activeTab === 'customer' ? 'text-emerald-700 font-bold' : 'text-slate-600'}`}
         >
-          Customer
+          Resident
         </button>
         <button
           onClick={() => {
@@ -209,7 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }}
           className={`whitespace-nowrap ${activeTab === 'worker' ? 'text-emerald-700 font-bold' : 'text-slate-600'}`}
         >
-          Worker
+          Technician
         </button>
         <button
           onClick={() => {
@@ -224,13 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => setActiveTab('history')}
           className={`whitespace-nowrap ${activeTab === 'history' ? 'text-emerald-700 font-bold' : 'text-slate-600'}`}
         >
-          Audit
-        </button>
-        <button
-          onClick={onOpenDeployGuide}
-          className="whitespace-nowrap text-emerald-700 font-semibold flex items-center gap-1"
-        >
-          <span>🚀 Deploy</span>
+          Audit Ledger
         </button>
       </div>
     </header>

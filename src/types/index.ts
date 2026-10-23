@@ -139,3 +139,17 @@ export interface DemoScenario {
   highlightCategory: string;
   badgeText: string;
 }
+
+export interface UserSession {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: ActiveRole;
+  avatar: string;
+  workerId?: string;
+  customerId?: string;
+  isVerified?: boolean;
+  token?: string;
+  loginTime: string;
+}

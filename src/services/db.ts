@@ -129,7 +129,7 @@ const SEED_WORKERS: Worker[] = [
 const SEED_CUSTOMERS: Customer[] = [
   {
     id: 'c-1',
-    name: 'Aaditya Roy (Demo Customer)',
+    name: 'Aaditya Roy',
     phone: '+91 99001 11222',
     email: 'aaditya.roy@example.com',
     address: 'Flat 402, Green Glen Layout, Indiranagar, Bengaluru',
