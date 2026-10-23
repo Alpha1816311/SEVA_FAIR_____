@@ -72,19 +72,42 @@ export const VercelDeployGuideModal: React.FC<VercelDeployGuideModalProps> = ({ 
             Everything is Pre-Configured for Vercel
           </div>
           <p className="leading-relaxed text-emerald-800">
-            This project is fully optimized for Vercel deployment as a high-performance Single Page Application (SPA).
+            This project includes <code className="font-mono bg-white px-1 py-0.5 rounded border border-emerald-300">.npmrc</code> and <code className="font-mono bg-white px-1 py-0.5 rounded border border-emerald-300">vercel.json</code> configured to prevent peer dependency conflicts during build.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
             <div className="bg-white/80 px-2 py-1.5 rounded border border-emerald-200 flex items-center gap-1.5 text-slate-800">
-              <span className="text-emerald-600 font-bold">✓</span> vercel.json rewrites
+              <span className="text-emerald-600 font-bold">✓</span> .npmrc legacy-peer-deps
             </div>
             <div className="bg-white/80 px-2 py-1.5 rounded border border-emerald-200 flex items-center gap-1.5 text-slate-800">
-              <span className="text-emerald-600 font-bold">✓</span> Zero server secrets
+              <span className="text-emerald-600 font-bold">✓</span> vercel.json SPA rewrites
             </div>
             <div className="bg-white/80 px-2 py-1.5 rounded border border-emerald-200 flex items-center gap-1.5 text-slate-800">
-              <span className="text-emerald-600 font-bold">✓</span> Tested build output
+              <span className="text-emerald-600 font-bold">✓</span> Clean Vite 8 build
             </div>
           </div>
+        </div>
+
+        {/* Instant Fix Callout for Vercel ERESOLVE */}
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-950 space-y-2">
+          <div className="font-bold flex items-center gap-1.5 text-amber-900">
+            <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+            Did your Vercel build show "npm error ERESOLVE"? Here is the 10-second fix:
+          </div>
+          <p className="text-amber-800 leading-relaxed">
+            On your Vercel project dashboard, go to <strong>Settings</strong> &rarr; <strong>Build & Development Settings</strong> &rarr; enable <strong>Install Command</strong> override and set it to:
+          </p>
+          <div className="relative bg-slate-900 text-emerald-400 p-2.5 rounded-lg font-mono text-[11px] flex items-center justify-between">
+            <span>npm install --legacy-peer-deps</span>
+            <button
+              onClick={() => copyToClipboard('npm install --legacy-peer-deps', 99)}
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] px-2 py-0.5 rounded"
+            >
+              {copiedIndex === 99 ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+          <p className="text-[11px] text-amber-700">
+            Then go to the <strong>Deployments</strong> tab, click the three dots on the failed deployment, and click <strong>Redeploy</strong>!
+          </p>
         </div>
 
         {/* Method 1: Connect your GitHub Repo (Recommended - 1 Click) */}
