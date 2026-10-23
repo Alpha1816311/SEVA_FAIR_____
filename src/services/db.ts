@@ -430,6 +430,23 @@ class DatabaseService {
     if (skills) workers[idx].skills = skills;
     if (notes) workers[idx].verificationNotes = notes;
     this.saveWorkers(workers);
+
+    this.addHistoryEvent({
+      bookingId: `KYC-${workerId}`,
+      eventType: 'STATUS_CHANGED',
+      actorRole: 'ORGANISER',
+      actorName: 'Cooperative Organiser',
+      title: isVerified ? `Worker Profile Verified: ${workers[idx].name}` : `Verification Revoked: ${workers[idx].name}`,
+      description: isVerified 
+        ? `KYC approved & skills certified (${(skills || workers[idx].skills).join(', ')}). Authorized for live dispatch pool.`
+        : 'Worker verification revoked by cooperative organiser.',
+      details: {
+        workerId,
+        workerName: workers[idx].name,
+        reason: notes
+      }
+    });
+
     return workers[idx];
   }
 
@@ -738,6 +755,14 @@ class DatabaseService {
 
     if (status === 'completed') {
       b.completedAt = new Date().toISOString();
+      if (prevStatus !== 'completed' && b.assignedWorkerId) {
+        const workers = this.getWorkers();
+        const wIdx = workers.findIndex(w => w.id === b.assignedWorkerId);
+        if (wIdx !== -1) {
+          workers[wIdx].completedJobsCount = (workers[wIdx].completedJobsCount || 0) + 1;
+          this.saveWorkers(workers);
+        }
+      }
       if (options?.rating) {
         b.customerRating = options.rating;
         b.customerFeedback = options.feedback;

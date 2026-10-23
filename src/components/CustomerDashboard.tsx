@@ -47,6 +47,12 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   const [cancellationReason, setCancellationReason] = useState<string>('Schedule changed');
 
   useEffect(() => {
+    if (initialCustomerId) {
+      setCurrentCustomerId(initialCustomerId);
+    }
+  }, [initialCustomerId]);
+
+  useEffect(() => {
     loadData();
   }, [currentCustomerId]);
 

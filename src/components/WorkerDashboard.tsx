@@ -43,6 +43,12 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialWorkerId) {
+      setCurrentWorkerId(initialWorkerId);
+    }
+  }, [initialWorkerId]);
+
+  useEffect(() => {
     loadData();
   }, [currentWorkerId]);
 

@@ -77,15 +77,21 @@ export const isTimeOverlapping = (
   startB: string,
   endB: string
 ): boolean => {
+  if (!startA || !endA || !startB || !endB) return false;
+
   const toMinutes = (timeStr: string) => {
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + (m || 0);
+    const parts = timeStr.split(':').map(Number);
+    if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return 0;
+    return parts[0] * 60 + parts[1];
   };
 
   const aStart = toMinutes(startA);
   const aEnd = toMinutes(endA);
   const bStart = toMinutes(startB);
   const bEnd = toMinutes(endB);
+
+  // If intervals are inverted or zero length, treat as invalid (no overlap)
+  if (aEnd <= aStart || bEnd <= bStart) return false;
 
   // Overlap occurs if one interval does not strictly finish before the other starts
   return !(aEnd <= bStart || aStart >= bEnd);

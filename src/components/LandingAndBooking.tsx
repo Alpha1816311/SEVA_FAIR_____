@@ -86,6 +86,7 @@ export const LandingAndBooking: React.FC<LandingAndBookingProps> = ({
   // Submission & Preview states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -102,9 +103,16 @@ export const LandingAndBooking: React.FC<LandingAndBookingProps> = ({
     if (bRes.success) setBookings(bRes.data);
   };
 
+  const calcDuration = (start: string, end: string) => {
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+    const diff = (eh * 60 + (em || 0)) - (sh * 60 + (sm || 0));
+    return diff > 0 ? Math.max(0.5, Number((diff / 60).toFixed(1))) : 2;
+  };
+
   const currentStartTime = useCustomSlot ? customStartTime : TIME_SLOTS[selectedSlotIndex].start;
   const currentEndTime = useCustomSlot ? customEndTime : TIME_SLOTS[selectedSlotIndex].end;
-  const currentDuration = useCustomSlot ? 2 : TIME_SLOTS[selectedSlotIndex].duration;
+  const currentDuration = useCustomSlot ? calcDuration(customStartTime, customEndTime) : TIME_SLOTS[selectedSlotIndex].duration;
 
   // Real-time Allocation Preview Calculation
   const activeCustomer = customers.find(c => c.id === selectedCustomer);
@@ -128,7 +136,13 @@ export const LandingAndBooking: React.FC<LandingAndBookingProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     if (!activeCustomer) return;
+
+    if (useCustomSlot && customStartTime >= customEndTime) {
+      setSubmitError('Booking end time must be later than start time.');
+      return;
+    }
 
     setIsSubmitting(true);
     const res = await api.createBooking({
@@ -423,6 +437,13 @@ export const LandingAndBooking: React.FC<LandingAndBookingProps> = ({
               </div>
 
               {/* Submit CTA Button */}
+              {submitError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                  <span>{submitError}</span>
+                </div>
+              )}
+
               <div className="pt-2">
                 <button
                   type="submit"
